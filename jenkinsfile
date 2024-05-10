@@ -9,70 +9,81 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                executeStep('Executing Maven build process')
+                script {
+                    performStep('Executing Maven build process')
+                }
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                executeStep('Executing JUnit tests')
-                executeStep('Executing Selenium integration tests')
+                script {
+                    performStep('Executing JUnit tests')
+                    performStep('Executing Selenium integration tests')
+                }
             }
         }
 
         stage('Code Analysis') {
             steps {
-                executeStep('Performing static code analysis using Jenkins Plugins')
+                script {
+                    performStep('Performing static code analysis using Jenkins Plugins')
+                }
             }
         }
 
         stage('Security Scan') {
             steps {
-                executeStep('Conducting security scan with SonarQube')
+                script {
+                    performStep('Conducting security scan with SonarQube')
+                }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                executeStep('Initiating deployment to staging server')
+                script {
+                    performStep('Initiating deployment to staging server')
+                }
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                executeStep('Conducting integration tests in staging environment')
+                script {
+                    performStep('Conducting integration tests in staging environment')
+                }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                executeStep('Initiating deployment to production server')
+                script {
+                    performStep('Initiating deployment to production server')
+                }
             }
         }
     }
 }
 
-// Define a generic function to execute a step and handle post actions
-def executeStep(String action) {
+def performStep(String action) {
     echo action
-    postBuildActions()
-}
-
-// Define post-build actions to handle success and failure
-def postBuildActions() {
-    post {
-        success {
-            sendEmail('Successfully Completed')
-        }
-        failure {
-            sendEmail('Failed')
-        }
+    try {
+        // simulate step execution logic, replace with real commands
+        // for example: sh 'mvn clean install' for Maven build
+        success = true
+    } catch (Exception e) {
+        success = false
+    }
+    if (success) {
+        sendEmail(action, 'Successful')
+    } else {
+        sendEmail(action, 'Failed')
     }
 }
 
-// Define the function to send emails
-def sendEmail(String message) {
-    mail body: "Current Pipeline Stage: ${env.STAGE_NAME}\nResult: ${message}",
-         subject: "Notification: ${env.STAGE_NAME} - ${message}",
+def sendEmail(String action, String result) {
+    mail body: "${action}: ${result}",
+         subject: "Pipeline Notification: ${action} - ${result}",
          to: "nishithadayanand@gmail.com"
 }

@@ -10,50 +10,7 @@ pipeline {
     stage('Build') {
       steps {
         script {
-          echo 'Building code using Maven'
-          sendEmail('Build Successful')
-        }
-      }
-      post {
-        failure {
-          sendEmail('Build Fail')
-        }
-      }
-    }
-
-    stage('Unit, and Integration Tests') {
-      steps {
-        script {
-          echo 'Using JUnit to execute unit tests'
-          echo 'Using Selenium to conduct integration testing'
-          sendEmail('Build Successful')
-        }
-      }
-      post {
-        failure {
-          sendEmail('Build Fail')
-        }
-      }
-    }
-
-    stage('Code Interpretation') {
-      steps {
-        script {
-          echo 'Code analysis using the Jenkins Plugins'
-          sendEmail('Build Successful')
-        }
-      }
-      post {
-        failure {
-          sendEmail('Build Fail')
-        }
-      }
-    }
-
-    stage('Security Scan') {
-      steps {
-        script {
-          echo 'Conducting a security audit with SonarQube'
+          echo 'Building the code'
           sendEmail('Build Successful')
         }
       }
@@ -64,10 +21,53 @@ pipeline {
       }
     }
 
-    stage('Implement to Staging') {
+    stage('Unit and Integration Testing') {
       steps {
         script {
-          echo 'Deploy to staging server'
+          echo 'Use JUnit for unit tests'
+          echo 'Conduct integration testing'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Failed')
+        }
+      }
+    }
+
+    stage('Code execution') {
+      steps {
+        script {
+          echo 'Interpretation of code using the Jenkins Plugins'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Failed')
+        }
+      }
+    }
+
+    stage('Security Scan') {
+      steps {
+        script {
+          echo 'Security monitoring with SonarQube'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Failed')
+        }
+      }
+    }
+
+    stage('Setting stage for Implementation') {
+      steps {
+        script {
+          echo 'Deploy to stage the server'
           sendEmail('Build Successful')
         }
       }
@@ -81,13 +81,13 @@ pipeline {
     stage('Testing Integration for Staging') {
       steps {
         script {
-          echo 'executing integration tests in a staging setting'
+          echo 'Integration of executing tests in a staging setting'
           sendEmail('Build Successful')
         }
       }
       post {
         failure {
-          sendEmail('Build Fail')
+          sendEmail('Build Failed')
         }
       }
     }

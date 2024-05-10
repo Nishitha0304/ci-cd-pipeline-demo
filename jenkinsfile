@@ -9,107 +9,107 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code with Maven'
+                echo 'Executing Maven build process'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Maven Build Completed Successfully')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Maven Build Failed')
                 }
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit tests with JUnit'
-                echo 'Running integration tests with Selenium'
+                echo 'Executing JUnit tests'
+                echo 'Executing Selenium integration tests'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Testing Phase Completed Successfully')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Testing Phase Failed')
                 }
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Performing code analysis with Jenkins Plugins'
+                echo 'Performing static code analysis using Jenkins Plugins'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Code Analysis Completed Successfully')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Code Analysis Failed')
                 }
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan with SonarQube'
+                echo 'Conducting security scan with SonarQube'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Security Scan Successful')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Security Scan Unsuccessful')
                 }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging server (e.g., AWS EC2 instance)'
+                echo 'Initiating deployment to staging server (e.g., AWS EC2 instance)'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Deployment to Staging Successful')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Deployment to Staging Failed')
                 }
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging environment'
+                echo 'Conducting integration tests in staging environment'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Staging Environment Testing Successful')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Staging Environment Testing Failed')
                 }
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production server (e.g., AWS EC2 instance)'
+                echo 'Initiating deployment to production server (e.g., AWS EC2 instance)'
             }
-             post {
+            post {
                 success {
-                    sendEmail('Build Successful')
+                    sendEmail('Deployment to Production Successful')
                 }
                 failure {
-                    sendEmail('Build Failed')
+                    sendEmail('Deployment to Production Failed')
                 }
             }
         }
     }
 }
 
-    def sendEmail(String status) {
-    mail body: "Pipeline Stage: ${env.STAGE_NAME}\nStatus: ${status}",
-             subject: "Pipeline Stage: ${env.STAGE_NAME} - ${status}",
-             to: "nishithadayanand@gmail.com"
+def sendEmail(String message) {
+    mail body: "Current Pipeline Stage: ${env.STAGE_NAME}\nResult: ${message}",
+         subject: "Notification: ${env.STAGE_NAME} - ${message}",
+         to: "nishithadayanand@gmail.com"
 }

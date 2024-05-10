@@ -9,105 +9,68 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Executing Maven build process'
-            }
-            post {
-                success {
-                    sendEmail('Maven Build Completed Successfully')
-                }
-                failure {
-                    sendEmail('Maven Build Failed')
-                }
+                executeStep('Executing Maven build process')
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Executing JUnit tests'
-                echo 'Executing Selenium integration tests'
-            }
-            post {
-                success {
-                    sendEmail('Testing Phase Completed Successfully')
-                }
-                failure {
-                    sendEmail('Testing Phase Failed')
-                }
+                executeStep('Executing JUnit tests')
+                executeStep('Executing Selenium integration tests')
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Performing static code analysis using Jenkins Plugins'
-            }
-            post {
-                success {
-                    sendEmail('Code Analysis Completed Successfully')
-                }
-                failure {
-                    sendEmail('Code Analysis Failed')
-                }
+                executeStep('Performing static code analysis using Jenkins Plugins')
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Conducting security scan with SonarQube'
-            }
-            post {
-                success {
-                    sendEmail('Security Scan Successful')
-                }
-                failure {
-                    sendEmail('Security Scan Unsuccessful')
-                }
+                executeStep('Conducting security scan with SonarQube')
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Initiating deployment to staging server (e.g., AWS EC2 instance)'
-            }
-            post {
-                success {
-                    sendEmail('Deployment to Staging Successful')
-                }
-                failure {
-                    sendEmail('Deployment to Staging Failed')
-                }
+                executeStep('Initiating deployment to staging server')
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Conducting integration tests in staging environment'
-            }
-            post {
-                success {
-                    sendEmail('Staging Environment Testing Successful')
-                }
-                failure {
-                    sendEmail('Staging Environment Testing Failed')
-                }
+                executeStep('Conducting integration tests in staging environment')
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Initiating deployment to production server (e.g., AWS EC2 instance)'
-            }
-            post {
-                success {
-                    sendEmail('Deployment to Production Successful')
-                }
-                failure {
-                    sendEmail('Deployment to Production Failed')
-                }
+                executeStep('Initiating deployment to production server')
             }
         }
     }
 }
 
+// Define a generic function to execute a step and handle post actions
+def executeStep(String action) {
+    echo action
+    postBuildActions()
+}
+
+// Define post-build actions to handle success and failure
+def postBuildActions() {
+    post {
+        success {
+            sendEmail('Successfully Completed')
+        }
+        failure {
+            sendEmail('Failed')
+        }
+    }
+}
+
+// Define the function to send emails
 def sendEmail(String message) {
     mail body: "Current Pipeline Stage: ${env.STAGE_NAME}\nResult: ${message}",
          subject: "Notification: ${env.STAGE_NAME} - ${message}",

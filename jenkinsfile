@@ -1,89 +1,115 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        TESTING_ENVIRONMENT = "testing_environment"
-        PRODUCTION_ENVIRONMENT = "Nishitha"
+  environment {
+    TESTING_ENVIRONMENT = "testing_environment"
+    PRODUCTION_ENVIRONMENT = "Nishitha Dayanand"
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        script {
+          echo 'Building code using Maven'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Fail')
+        }
+      }
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    performStep('Executing Maven build process')
-                }
-            }
+    stage('Unit, and Integration Tests') {
+      steps {
+        script {
+          echo 'Using JUnit to execute unit tests'
+          echo 'Using Selenium to conduct integration testing'
+          sendEmail('Build Successful')
         }
-
-        stage('Unit and Integration Tests') {
-            steps {
-                script {
-                    performStep('Executing JUnit tests')
-                    performStep('Executing Selenium integration tests')
-                }
-            }
+      }
+      post {
+        failure {
+          sendEmail('Build Fail')
         }
-
-        stage('Code Analysis') {
-            steps {
-                script {
-                    performStep('Performing static code analysis using Jenkins Plugins')
-                }
-            }
-        }
-
-        stage('Security Scan') {
-            steps {
-                script {
-                    performStep('Conducting security scan with SonarQube')
-                }
-            }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                script {
-                    performStep('Initiating deployment to staging server')
-                }
-            }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                script {
-                    performStep('Conducting integration tests in staging environment')
-                }
-            }
-        }
-
-        stage('Deploy to Production') {
-            steps {
-                script {
-                    performStep('Initiating deployment to production server')
-                }
-            }
-        }
+      }
     }
+
+    stage('Code Interpretation') {
+      steps {
+        script {
+          echo 'Code analysis using the Jenkins Plugins'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Fail')
+        }
+      }
+    }
+
+    stage('Security Scan') {
+      steps {
+        script {
+          echo 'Conducting a security audit with SonarQube'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Failed')
+        }
+      }
+    }
+
+    stage('Implement to Staging') {
+      steps {
+        script {
+          echo 'Deploy to staging server'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Failed')
+        }
+      }
+    }
+
+    stage('Testing Integration for Staging') {
+      steps {
+        script {
+          echo 'executing integration tests in a staging setting'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Fail')
+        }
+      }
+    }
+
+    stage('Deploy to Production') {
+      steps {
+        script {
+          echo 'Deploy to production server'
+          sendEmail('Build Successful')
+        }
+      }
+      post {
+        failure {
+          sendEmail('Build Fail')
+        }
+      }
+    }
+  }
 }
 
-def performStep(String action) {
-    echo action
-    try {
-        // simulate step execution logic, replace with real commands
-        // for example: sh 'mvn clean install' for Maven build
-        success = true
-    } catch (Exception e) {
-        success = false
-    }
-    if (success) {
-        sendEmail(action, 'Successful')
-    } else {
-        sendEmail(action, 'Failed')
-    }
-}
-
-def sendEmail(String action, String result) {
-    mail body: "${action}: ${result}",
-         subject: "Pipeline Notification: ${action} - ${result}",
-         to: "nishithadayanand@gmail.com"
+def sendEmail(String status) {
+  mail body: "Pipeline Stage: ${env.STAGE_NAME}\\nStatus: ${status}",
+       subject: "Pipeline Stage: ${env.STAGE_NAME} - ${status}",
+       to: "nishithadayanand@gmail.com"
 }
